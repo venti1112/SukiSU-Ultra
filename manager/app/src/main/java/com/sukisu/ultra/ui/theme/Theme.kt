@@ -134,6 +134,16 @@ val LocalColorMode = staticCompositionLocalOf { 0 }
 
 val LocalEnableBlur = staticCompositionLocalOf { false }
 
+val LocalEnableBottomBarBlur = staticCompositionLocalOf { false }
+
+const val DEFAULT_BOTTOM_BAR_BLUR_STRENGTH = 1f
+const val MIN_BOTTOM_BAR_BLUR_STRENGTH = 0.5f
+const val MAX_BOTTOM_BAR_BLUR_STRENGTH = 1.5f
+
+val LocalBottomBarBlurStrength = staticCompositionLocalOf {
+    DEFAULT_BOTTOM_BAR_BLUR_STRENGTH
+}
+
 val LocalEnableFloatingBottomBar = staticCompositionLocalOf { false }
 
 val LocalEnableFloatingBottomBarBlur = staticCompositionLocalOf { false }

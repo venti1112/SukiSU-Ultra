@@ -243,6 +243,10 @@
     <string name="settings_color_style">Kiểu màu sắc</string>
     <string name="settings_enable_blur">Mờ</string>
     <string name="settings_enable_blur_summary">Kích hoạt hiệu ứng làm mờ cho thanh tiêu đề và thanh điều hướng.</string>
+    <string name="settings_enable_bottom_bar_blur">Làm mờ Gaussian thanh dưới</string>
+    <string name="settings_enable_bottom_bar_blur_summary">Áp dụng hiệu ứng làm mờ Gaussian cho thanh điều hướng dưới.</string>
+    <string name="settings_bottom_bar_blur_strength">Cường độ làm mờ thanh dưới</string>
+    <string name="settings_bottom_bar_blur_strength_summary">Điều chỉnh cường độ làm mờ Gaussian của thanh điều hướng dưới.</string>
     <string name="settings_floating_bottom_bar">Thanh điều hướng nổi</string>
     <string name="settings_floating_bottom_bar_summary">Sử dụng thanh điều hướng nổi kiểu Apple.</string>
     <string name="settings_enable_glass">Liquid Glass</string>

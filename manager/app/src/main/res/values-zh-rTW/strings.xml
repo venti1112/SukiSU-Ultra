@@ -235,6 +235,10 @@
     <string name="current_device_kmi">目前裝置的 KMI</string>
     <string name="settings_enable_blur">模糊</string>
     <string name="settings_enable_blur_summary">啟用頂欄與底欄的模糊效果</string>
+    <string name="settings_enable_bottom_bar_blur">底欄高斯模糊</string>
+    <string name="settings_enable_bottom_bar_blur_summary">為底欄啟用高斯模糊</string>
+    <string name="settings_bottom_bar_blur_strength">底欄模糊強度</string>
+    <string name="settings_bottom_bar_blur_strength_summary">調整底欄的高斯模糊強度</string>
     <string name="settings_floating_bottom_bar">懸浮底欄</string>
     <string name="settings_floating_bottom_bar_summary">使用 Apple 風格的懸浮底欄</string>
     <string name="settings_enable_glass">液態玻璃</string>

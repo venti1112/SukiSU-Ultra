@@ -76,6 +76,8 @@ import com.sukisu.ultra.R
 import com.sukisu.ultra.ui.component.bottombar.useNavigationRail
 import com.sukisu.ultra.ui.component.miuix.ScaleDialog
 import com.sukisu.ultra.ui.theme.LocalEnableBlur
+import com.sukisu.ultra.ui.theme.MAX_BOTTOM_BAR_BLUR_STRENGTH
+import com.sukisu.ultra.ui.theme.MIN_BOTTOM_BAR_BLUR_STRENGTH
 import com.sukisu.ultra.ui.theme.keyColorOptions
 import com.sukisu.ultra.ui.util.BlurredBar
 import com.sukisu.ultra.ui.util.rememberBlurBackdrop
@@ -285,6 +287,74 @@ fun ColorPaletteScreenMiuix(
                                 }
                             }
                         }
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
+                            SwitchPreference(
+                                title = stringResource(id = R.string.settings_enable_bottom_bar_blur),
+                                summary = stringResource(id = R.string.settings_enable_bottom_bar_blur_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.BlurOn,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(id = R.string.settings_enable_bottom_bar_blur),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                checked = uiState.enableBottomBarBlur,
+                                onCheckedChange = {
+                                    actions.onSetEnableBottomBarBlur(it)
+                                },
+                            )
+                            AnimatedVisibility(visible = uiState.enableBottomBarBlur) {
+                                var bottomBarBlurValue by remember(uiState.bottomBarBlurStrength) {
+                                    mutableFloatStateOf(uiState.bottomBarBlurStrength)
+                                }
+                                BasicComponent(
+                                    title = stringResource(R.string.settings_bottom_bar_blur_strength),
+                                    summary = stringResource(R.string.settings_bottom_bar_blur_strength_summary),
+                                    startAction = {
+                                        Icon(
+                                            Icons.Rounded.BlurOn,
+                                            modifier = Modifier.padding(end = 6.dp),
+                                            contentDescription = stringResource(R.string.settings_bottom_bar_blur_strength),
+                                            tint = colorScheme.onBackground,
+                                        )
+                                    },
+                                    endActions = {
+                                        Text(
+                                            text = "${(bottomBarBlurValue * 100).roundToInt()}%",
+                                            color = colorScheme.onSurfaceVariantActions,
+                                        )
+                                    },
+                                    bottomAction = {
+                                        Slider(
+                                            value = bottomBarBlurValue,
+                                            onValueChange = {
+                                                bottomBarBlurValue = it
+                                            },
+                                            onValueChangeFinished = {
+                                                actions.onSetBottomBarBlurStrength(bottomBarBlurValue)
+                                            },
+                                            valueRange = MIN_BOTTOM_BAR_BLUR_STRENGTH..MAX_BOTTOM_BAR_BLUR_STRENGTH,
+                                            showKeyPoints = true,
+                                            keyPoints = listOf(
+                                                MIN_BOTTOM_BAR_BLUR_STRENGTH,
+                                                0.75f,
+                                                1f,
+                                                1.25f,
+                                                MAX_BOTTOM_BAR_BLUR_STRENGTH,
+                                            ),
+                                            magnetThreshold = 0.02f,
+                                            hapticEffect = SliderDefaults.SliderHapticEffect.Step,
+                                        )
+                                    },
+                                )
+                            }
                     }
 
                     Card(

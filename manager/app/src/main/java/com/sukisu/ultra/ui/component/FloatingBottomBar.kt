@@ -41,7 +41,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.input.key.Key
@@ -59,6 +61,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
@@ -72,8 +75,10 @@ import com.sukisu.ultra.ui.component.miuix.animation.DampedDragAnimation
 import com.sukisu.ultra.ui.component.miuix.animation.InteractiveHighlight
 import com.sukisu.ultra.ui.theme.isInDarkTheme
 import top.yukonga.miuix.kmp.blur.Backdrop
+import top.yukonga.miuix.kmp.blur.BackdropEffectScope
 import top.yukonga.miuix.kmp.blur.blur
 import top.yukonga.miuix.kmp.blur.drawBackdrop
+import top.yukonga.miuix.kmp.blur.effect
 import top.yukonga.miuix.kmp.blur.highlight.BloomStroke
 import top.yukonga.miuix.kmp.blur.highlight.Highlight
 import top.yukonga.miuix.kmp.blur.highlight.LightPosition
@@ -213,6 +218,8 @@ fun FloatingBottomBar(
     accentColor: Color = MiuixTheme.colorScheme.primary,
     tabContentColor: Color = MiuixTheme.colorScheme.onSurface,
     surfaceContainer: Color = MiuixTheme.colorScheme.surfaceContainer,
+    useGaussianBlur: Boolean = false,
+    blurRadius: Dp = 4.dp,
     content: @Composable RowScope.((Int) -> Unit) -> Unit
 ) {
     val isInDark = isInDarkTheme()
@@ -221,8 +228,17 @@ fun FloatingBottomBar(
 
     val tabsBackdrop = rememberLayerBackdrop()
     val density = LocalDensity.current
+    val blurRadiusPx = with(density) { blurRadius.toPx() }
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val animationScope = rememberCoroutineScope()
+    val applyBackdropBlur: BackdropEffectScope.() -> Unit = {
+        if (useGaussianBlur) {
+            padding = maxOf(padding, blurRadiusPx)
+            effect(BlurEffect(blurRadiusPx, blurRadiusPx, TileMode.Clamp))
+        } else {
+            blur(blurRadiusPx, blurRadiusPx)
+        }
+    }
 
     var tabWidthPx by remember { mutableFloatStateOf(0f) }
     var totalWidthPx by remember { mutableFloatStateOf(0f) }
@@ -360,7 +376,7 @@ fun FloatingBottomBar(
                             effects = {
                                 padding = maxOf(padding, 40.dp.toPx())
                                 vibrancy()
-                                blur(4.dp.toPx(), 4.dp.toPx())
+                                applyBackdropBlur()
                                 lens(
                                     refractionHeight = 24.dp.toPx(),
                                     refractionAmount = 24.dp.toPx(),
@@ -412,7 +428,7 @@ fun FloatingBottomBar(
                             shape = { pillShape },
                             effects = {
                                 vibrancy()
-                                blur(4.dp.toPx(), 4.dp.toPx())
+                                applyBackdropBlur()
                                 lens(
                                     refractionHeight = 24.dp.toPx(),
                                     refractionAmount = 24.dp.toPx(),

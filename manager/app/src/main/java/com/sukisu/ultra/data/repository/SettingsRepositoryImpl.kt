@@ -14,6 +14,9 @@ import com.sukisu.ultra.magica.BootCompletedReceiver
 import com.sukisu.ultra.ui.UiMode
 import com.sukisu.ultra.ui.screen.module.ModuleNameSort
 import com.sukisu.ultra.ui.screen.modulerepo.RepoSort
+import com.sukisu.ultra.ui.theme.DEFAULT_BOTTOM_BAR_BLUR_STRENGTH
+import com.sukisu.ultra.ui.theme.MAX_BOTTOM_BAR_BLUR_STRENGTH
+import com.sukisu.ultra.ui.theme.MIN_BOTTOM_BAR_BLUR_STRENGTH
 import com.sukisu.ultra.ui.util.execKsud
 import com.sukisu.ultra.ui.util.getFeaturePersistValue
 import com.sukisu.ultra.ui.util.getFeatureValue
@@ -110,6 +113,20 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var enableBlur: Boolean
         get() = prefs.getBoolean("enable_blur", false)
         set(value) = prefs.edit { putBoolean("enable_blur", value) }
+
+    override var enableBottomBarBlur: Boolean
+        get() = prefs.getBoolean("enable_bottom_bar_blur", false)
+        set(value) = prefs.edit { putBoolean("enable_bottom_bar_blur", value) }
+
+    override var bottomBarBlurStrength: Float
+        get() = prefs.getFloat("bottom_bar_blur_strength", DEFAULT_BOTTOM_BAR_BLUR_STRENGTH)
+            .coerceIn(MIN_BOTTOM_BAR_BLUR_STRENGTH, MAX_BOTTOM_BAR_BLUR_STRENGTH)
+        set(value) = prefs.edit {
+            putFloat(
+                "bottom_bar_blur_strength",
+                value.coerceIn(MIN_BOTTOM_BAR_BLUR_STRENGTH, MAX_BOTTOM_BAR_BLUR_STRENGTH),
+            )
+        }
 
     override var enableFloatingBottomBar: Boolean
         get() = prefs.getBoolean("enable_floating_bottom_bar", false)

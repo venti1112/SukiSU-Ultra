@@ -258,6 +258,10 @@
     <string name="current_device_kmi">Ini perangkat KMI</string>
     <string name="settings_enable_blur">Blur</string>
     <string name="settings_enable_blur_summary">Aktifkan efek blur untuk bilah atas dan bawah</string>
+    <string name="settings_enable_bottom_bar_blur">Blur Gaussian bilah bawah</string>
+    <string name="settings_enable_bottom_bar_blur_summary">Terapkan blur Gaussian pada bilah bawah.</string>
+    <string name="settings_bottom_bar_blur_strength">Intensitas buram bilah bawah</string>
+    <string name="settings_bottom_bar_blur_strength_summary">Sesuaikan intensitas blur Gaussian pada bilah bawah.</string>
     <string name="settings_floating_bottom_bar">Bilah bawah mengambang</string>
     <string name="settings_floating_bottom_bar_summary">Gunakan bilah bawah mengambang ala Apple</string>
     <string name="settings_enable_glass">Kaca cair</string>

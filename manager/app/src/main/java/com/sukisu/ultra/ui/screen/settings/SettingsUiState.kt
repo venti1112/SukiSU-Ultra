@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.sukisu.ultra.ui.UiMode
+import com.sukisu.ultra.ui.theme.DEFAULT_BOTTOM_BAR_BLUR_STRENGTH
 
 @Immutable
 data class SettingsUiState(
@@ -22,6 +23,8 @@ data class SettingsUiState(
     val enableSwipeDismiss: Boolean = true,
     val pagerInterceptionMode: Int = 1,
     val enableBlur: Boolean = true,
+    val enableBottomBarBlur: Boolean = false,
+    val bottomBarBlurStrength: Float = DEFAULT_BOTTOM_BAR_BLUR_STRENGTH,
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,

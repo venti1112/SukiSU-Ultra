@@ -228,6 +228,10 @@
     <string name="settings_color_style">Style de couleurs</string>
     <string name="settings_enable_blur">Flou</string>
     <string name="settings_enable_blur_summary">Activez l\'effet de flou pour les barres supérieures et inférieures</string>
+    <string name="settings_enable_bottom_bar_blur">Flou gaussien de la barre inférieure</string>
+    <string name="settings_enable_bottom_bar_blur_summary">Appliquez un flou gaussien à la barre inférieure.</string>
+    <string name="settings_bottom_bar_blur_strength">Intensité du flou de la barre inférieure</string>
+    <string name="settings_bottom_bar_blur_strength_summary">Réglez l’intensité du flou gaussien de la barre inférieure.</string>
     <string name="settings_floating_bottom_bar">Barre inférieure flottante</string>
     <string name="settings_floating_bottom_bar_summary">Utilisez la barre inférieure flottante de type Apple</string>
     <string name="settings_enable_glass">Liquid Glass</string>

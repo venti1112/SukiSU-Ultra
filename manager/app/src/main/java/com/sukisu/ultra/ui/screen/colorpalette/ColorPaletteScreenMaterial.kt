@@ -50,6 +50,7 @@ import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.rounded.AspectRatio
+import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.DesignServices
@@ -98,6 +99,8 @@ import com.sukisu.ultra.ui.component.material.TonalCard
 import com.sukisu.ultra.ui.component.material.TopBarBackButton
 import com.sukisu.ultra.ui.component.material.expressiveTopAppBarColors
 import com.sukisu.ultra.ui.theme.ColorMode
+import com.sukisu.ultra.ui.theme.MAX_BOTTOM_BAR_BLUR_STRENGTH
+import com.sukisu.ultra.ui.theme.MIN_BOTTOM_BAR_BLUR_STRENGTH
 import com.sukisu.ultra.ui.theme.keyColorOptions
 import com.sukisu.ultra.ui.theme.rememberKernelSUColorScheme
 import kotlin.math.roundToInt
@@ -276,6 +279,23 @@ fun ColorPaletteScreenMaterial(
             item {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp),
+                    content = listOf(
+                        {
+                            SegmentedSwitchItem(
+                                icon = Icons.Rounded.BlurOn,
+                                title = stringResource(id = R.string.settings_enable_bottom_bar_blur),
+                                summary = stringResource(id = R.string.settings_enable_bottom_bar_blur_summary),
+                                checked = uiState.enableBottomBarBlur,
+                                onCheckedChange = actions.onSetEnableBottomBarBlur,
+                            )
+                        }
+                    )
+                )
+            }
+
+            item {
+                SegmentedColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     content = buildList<@Composable () -> Unit> {
                         // The liquid glass bar relies on RenderEffect blur, same gate as the Miuix toggle.
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) add {
@@ -298,6 +318,59 @@ fun ColorPaletteScreenMaterial(
                         }
                     }
                 )
+            }
+
+            if (uiState.enableBottomBarBlur) {
+                item {
+                    TonalCard(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        val sliderState = rememberSliderState(
+                            value = uiState.bottomBarBlurStrength,
+                            trackRange = MIN_BOTTOM_BAR_BLUR_STRENGTH..MAX_BOTTOM_BAR_BLUR_STRENGTH,
+                        )
+
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    Icons.Rounded.BlurOn,
+                                    contentDescription = stringResource(R.string.settings_bottom_bar_blur_strength),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.settings_bottom_bar_blur_strength),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.settings_bottom_bar_blur_strength_summary),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                Text(
+                                    text = "${(sliderState.value * 100).roundToInt()}%",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+
+                            Slider(
+                                state = sliderState,
+                                onValueChangeFinished = {
+                                    actions.onSetBottomBarBlurStrength(sliderState.value)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

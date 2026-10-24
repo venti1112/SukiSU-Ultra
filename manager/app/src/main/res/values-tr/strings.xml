@@ -228,6 +228,10 @@
     <string name="current_device_kmi">Bu cihazın KMI</string>
     <string name="settings_enable_blur">Bulanıklık</string>
     <string name="settings_enable_blur_summary">Üst ve alt çubuklar için bulanıklaştırma efektini etkinleştir</string>
+    <string name="settings_enable_bottom_bar_blur">Alt çubuk Gauss bulanıklığı</string>
+    <string name="settings_enable_bottom_bar_blur_summary">Alt çubuğa Gauss bulanıklığı uygulayın.</string>
+    <string name="settings_bottom_bar_blur_strength">Alt çubuk bulanıklık gücü</string>
+    <string name="settings_bottom_bar_blur_strength_summary">Alt çubuğun Gauss bulanıklık gücünü ayarlayın.</string>
     <string name="settings_floating_bottom_bar">Yüzen alt çubuk</string>
     <string name="settings_floating_bottom_bar_summary">Apple tarzı kayan alt çubuğu kullan</string>
     <string name="settings_enable_glass">Liquid glass</string>

@@ -108,8 +108,10 @@ import com.sukisu.ultra.ui.screen.umountmanager.UmountManagerScreen
 import com.sukisu.ultra.ui.theme.KernelSUTheme
 import com.sukisu.ultra.ui.theme.LocalColorMode
 import com.sukisu.ultra.ui.theme.LocalEnableBlur
+import com.sukisu.ultra.ui.theme.LocalEnableBottomBarBlur
 import com.sukisu.ultra.ui.theme.LocalEnableFloatingBottomBar
 import com.sukisu.ultra.ui.theme.LocalEnableFloatingBottomBarBlur
+import com.sukisu.ultra.ui.theme.LocalBottomBarBlurStrength
 import com.sukisu.ultra.ui.theme.LocalEnableNavigationBadge
 import com.sukisu.ultra.ui.theme.LocalModuleDescriptionMaxLines
 import com.sukisu.ultra.ui.util.getSuperuserCount
@@ -254,6 +256,8 @@ class MainActivity : ComponentActivity() {
                 LocalDensity provides density,
                 LocalColorMode provides appSettings.colorMode.value,
                 LocalEnableBlur provides uiState.enableBlur,
+                LocalEnableBottomBarBlur provides uiState.enableBottomBarBlur,
+                LocalBottomBarBlurStrength provides uiState.bottomBarBlurStrength,
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalEnableNavigationBadge provides uiState.enableNavigationBadge,
@@ -421,6 +425,7 @@ fun MainScreen(
 ) {
     val navController = LocalNavigator.current
     val enableBlur = LocalEnableBlur.current
+    val enableBottomBarBlur = LocalEnableBottomBarBlur.current
     val enableFloatingBottomBar = LocalEnableFloatingBottomBar.current
     val enableFloatingBottomBarBlur = LocalEnableFloatingBottomBarBlur.current
     val useNavigationRail = useNavigationRail(enableFloatingBottomBar)
@@ -495,7 +500,10 @@ fun MainScreen(
         UiMode.Material -> MaterialTheme.colorScheme.surfaceContainer // Matches the Material page background behind the glass bar
         UiMode.Miuix -> MiuixTheme.colorScheme.surface
     }
-    val blurBackdrop = rememberBlurBackdrop(enableBlur)
+    val blurBackdrop = rememberBlurBackdrop(
+        enableBlur = enableBlur || enableBottomBarBlur,
+        surfaceColor = surfaceColor,
+    )
 
     val backdrop = rememberLayerBackdrop {
         drawRect(surfaceColor)

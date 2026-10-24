@@ -26,9 +26,12 @@ import com.sukisu.ultra.R
 import com.sukisu.ultra.ui.LocalMainPagerState
 import com.sukisu.ultra.ui.component.FloatingBottomBar
 import com.sukisu.ultra.ui.component.FloatingBottomBarItem
+import com.sukisu.ultra.ui.theme.LocalBottomBarBlurStrength
+import com.sukisu.ultra.ui.theme.LocalEnableBottomBarBlur
 import com.sukisu.ultra.ui.theme.LocalEnableFloatingBottomBar
 import com.sukisu.ultra.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.sukisu.ultra.ui.util.BlurredBar
+import com.sukisu.ultra.ui.util.GaussianBlurredBar
 import top.yukonga.miuix.kmp.basic.Badge
 import top.yukonga.miuix.kmp.basic.BadgedBox
 import top.yukonga.miuix.kmp.basic.Icon
@@ -53,6 +56,8 @@ fun BottomBarMiuix(
     val mainState = LocalMainPagerState.current
     val enableFloatingBottomBar = LocalEnableFloatingBottomBar.current
     val enableFloatingBottomBarBlur = LocalEnableFloatingBottomBarBlur.current
+    val enableBottomBarBlur = LocalEnableBottomBarBlur.current
+    val bottomBarBlurStrength = LocalBottomBarBlurStrength.current
 
     val items = BottomBarDestination.entries.map { destination ->
         NavigationItem(
@@ -60,72 +65,91 @@ fun BottomBarMiuix(
             icon = destination.icon,
         )
     }
-    if (!enableFloatingBottomBar) {
-        BlurredBar(blurBackdrop) {
-            NavigationBar(
-                modifier = modifier,
-                color = if (blurBackdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface,
-                content = {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            modifier = Modifier.weight(1f),
-                            icon = item.icon,
-                            label = item.label,
-                            selected = mainState.selectedPage == index,
-                            onClick = {
-                                mainState.animateToPage(index)
-                            },
-                            badge = navigationBadgeFor(index, navigationBadge),
-                        )
-                    }
-                }
-            )
-        }
-    } else {
-        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            .let { inset -> if (inset != 0.dp) 8.dp + inset else 28.dp }
-        FloatingBottomBar(
-            modifier = modifier
-                .pointerInput(Unit) {
-                    detectTapGestures { }
-                }
-                .padding(start = 28.dp, end = 28.dp, bottom = bottomPadding),
-            selectedIndex = mainState.selectedPage,
-            onSelected = { mainState.animateToPage(it) },
-            backdrop = backdrop,
-            tabsCount = items.size,
-            isBlurEnabled = enableFloatingBottomBarBlur,
-        ) { activateTab ->
-            items.forEachIndexed { index, item ->
-                FloatingBottomBarItem(
-                    selected = mainState.selectedPage == index,
-                    onClick = {
-                        activateTab(index)
-                    },
-                    modifier = Modifier.defaultMinSize(minWidth = 76.dp)
-                ) {
-                    // Icon and label take LocalContentColor so the FloatingBottomBar backdrop copy
-                    // can recolor them to the accent tone inside the indicator pill.
-                    val badge = navigationBadgeFor(index, navigationBadge, floating = true)
-                    val icon: @Composable () -> Unit = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
-                        )
-                    }
-                    if (badge != null) {
-                        BadgedBox(badge = { badge() }) { icon() }
-                    } else {
-                        icon()
-                    }
-                    Text(
-                        text = item.label,
-                        fontSize = 11.sp,
-                        lineHeight = 14.sp,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Visible
+    val fixedNavigationBar = @Composable {
+        NavigationBar(
+            modifier = modifier,
+            color = if (blurBackdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface,
+            content = {
+                items.forEachIndexed { index, item ->
+                    NavigationBarItem(
+                        modifier = Modifier.weight(1f),
+                        icon = item.icon,
+                        label = item.label,
+                        selected = mainState.selectedPage == index,
+                        onClick = {
+                            mainState.animateToPage(index)
+                        },
+                        badge = navigationBadgeFor(index, navigationBadge),
                     )
+                }
+            }
+        )
+    }
+    when {
+        !enableFloatingBottomBar && enableBottomBarBlur -> {
+            GaussianBlurredBar(
+                backdrop = blurBackdrop,
+                blurRadius = 24.dp * bottomBarBlurStrength,
+                surfaceColor = MiuixTheme.colorScheme.surface,
+            ) {
+                fixedNavigationBar()
+            }
+        }
+        !enableFloatingBottomBar -> {
+            BlurredBar(blurBackdrop) {
+                fixedNavigationBar()
+            }
+        }
+        else -> {
+            val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                .let { inset -> if (inset != 0.dp) 8.dp + inset else 28.dp }
+            FloatingBottomBar(
+                modifier = modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures { }
+                    }
+                    .padding(start = 28.dp, end = 28.dp, bottom = bottomPadding),
+                selectedIndex = mainState.selectedPage,
+                onSelected = { mainState.animateToPage(it) },
+                backdrop = backdrop,
+                tabsCount = items.size,
+                isBlurEnabled = enableFloatingBottomBarBlur || enableBottomBarBlur,
+                useGaussianBlur = enableBottomBarBlur,
+                // Keep the liquid-glass lens legible instead of applying the much stronger
+                // Gaussian radius used by the fixed bottom bar.
+                blurRadius = (if (enableFloatingBottomBarBlur) 4.dp else 24.dp) * bottomBarBlurStrength,
+            ) { activateTab ->
+                items.forEachIndexed { index, item ->
+                    FloatingBottomBarItem(
+                        selected = mainState.selectedPage == index,
+                        onClick = {
+                            activateTab(index)
+                        },
+                        modifier = Modifier.defaultMinSize(minWidth = 76.dp)
+                    ) {
+                        // Icon and label take LocalContentColor so the FloatingBottomBar backdrop copy
+                        // can recolor them to the accent tone inside the indicator pill.
+                        val badge = navigationBadgeFor(index, navigationBadge, floating = true)
+                        val icon: @Composable () -> Unit = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.label,
+                            )
+                        }
+                        if (badge != null) {
+                            BadgedBox(badge = { badge() }) { icon() }
+                        } else {
+                            icon()
+                        }
+                        Text(
+                            text = item.label,
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Visible
+                        )
+                    }
                 }
             }
         }

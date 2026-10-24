@@ -46,6 +46,8 @@ class SettingsViewModel(
             val enableSwipeDismiss = repo.enableSwipeDismiss
             val pagerInterceptionMode = repo.pagerInterceptionMode
             val enableBlur = repo.enableBlur
+            val enableBottomBarBlur = repo.enableBottomBarBlur
+            val bottomBarBlurStrength = repo.bottomBarBlurStrength
             val enableFloatingBottomBar = repo.enableFloatingBottomBar
             val enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur
             val enableNavigationBadge = repo.enableNavigationBadge
@@ -116,6 +118,8 @@ class SettingsViewModel(
                     enableSwipeDismiss = enableSwipeDismiss,
                     pagerInterceptionMode = pagerInterceptionMode,
                     enableBlur = enableBlur,
+                    enableBottomBarBlur = enableBottomBarBlur,
+                    bottomBarBlurStrength = bottomBarBlurStrength,
                     enableFloatingBottomBar = enableFloatingBottomBar,
                     enableFloatingBottomBarBlur = enableFloatingBottomBarBlur,
                     enableNavigationBadge = enableNavigationBadge,
@@ -271,6 +275,16 @@ class SettingsViewModel(
     fun setEnableBlur(enabled: Boolean) {
         repo.enableBlur = enabled
         _uiState.update { it.copy(enableBlur = enabled) }
+    }
+
+    fun setEnableBottomBarBlur(enabled: Boolean) {
+        repo.enableBottomBarBlur = enabled
+        _uiState.update { it.copy(enableBottomBarBlur = enabled) }
+    }
+
+    fun setBottomBarBlurStrength(strength: Float) {
+        repo.bottomBarBlurStrength = strength
+        _uiState.update { it.copy(bottomBarBlurStrength = repo.bottomBarBlurStrength) }
     }
 
     fun setEnableFloatingBottomBar(enabled: Boolean) {

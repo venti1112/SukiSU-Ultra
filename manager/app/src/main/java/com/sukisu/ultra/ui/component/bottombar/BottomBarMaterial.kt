@@ -59,18 +59,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sukisu.ultra.Natives
 import com.sukisu.ultra.R
 import com.sukisu.ultra.ui.LocalMainPagerState
+import com.sukisu.ultra.ui.theme.LocalBottomBarBlurStrength
+import com.sukisu.ultra.ui.theme.LocalEnableBottomBarBlur
+import com.sukisu.ultra.ui.util.GaussianBlurredBar
+import top.yukonga.miuix.kmp.blur.LayerBackdrop
 
 @Composable
 fun BottomBarMaterial(
+    blurBackdrop: LayerBackdrop?,
     backdrop: Backdrop,
     navigationBadge: NavigationBadgeState,
     modifier: Modifier = Modifier,
@@ -79,6 +86,9 @@ fun BottomBarMaterial(
     if (!fullFeatured) return
 
     val mainPagerState = LocalMainPagerState.current
+    val enableBottomBarBlur = LocalEnableBottomBarBlur.current
+    val gaussianBlurBackdrop = if (enableBottomBarBlur) blurBackdrop else null
+    val bottomBarBlurRadius = 24.dp * LocalBottomBarBlurStrength.current
 
     val items = listOf(
         Triple(R.string.home, Icons.Filled.Home, Icons.Outlined.Home),
@@ -87,12 +97,16 @@ fun BottomBarMaterial(
         Triple(R.string.settings, Icons.Filled.Settings, Icons.Outlined.Settings)
     )
 
-    if (LocalEnableFloatingBottomBarBlur.current && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    if (LocalEnableFloatingBottomBarBlur.current &&
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    ) {
         LiquidBottomBarMaterial(
             backdrop = backdrop,
             items = items,
             navigationBadge = navigationBadge,
             modifier = modifier,
+            useGaussianBlur = enableBottomBarBlur,
+            blurRadius = 4.dp * LocalBottomBarBlurStrength.current,
         )
         return
     }
@@ -109,36 +123,54 @@ fun BottomBarMaterial(
             .padding(horizontal = 24.dp, vertical = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            modifier = Modifier.widthIn(max = 480.dp),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-            shadowElevation = 6.dp,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 8.dp)
-                    .selectableGroup(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+        val barSurface = @Composable {
+            Surface(
+                modifier = Modifier.widthIn(max = 480.dp),
+                shape = CircleShape,
+                color = if (gaussianBlurBackdrop != null) {
+                    Color.Transparent
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                },
+                shadowElevation = 6.dp,
             ) {
-                items.forEachIndexed { index, (label, selectedIcon, unselectedIcon) ->
-                    val selected = mainPagerState.selectedPage == index
-                    FloatingNavItem(
-                        selected = selected,
-                        label = stringResource(label),
-                        icon = if (selected) selectedIcon else unselectedIcon,
-                        badge = badgeFor(index, navigationBadge),
-                        onClick = {
-                            if (!selected) {
-                                mainPagerState.animateToPage(index)
-                            }
-                        },
-                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 8.dp)
+                        .selectableGroup(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    items.forEachIndexed { index, (label, selectedIcon, unselectedIcon) ->
+                        val selected = mainPagerState.selectedPage == index
+                        FloatingNavItem(
+                            selected = selected,
+                            label = stringResource(label),
+                            icon = if (selected) selectedIcon else unselectedIcon,
+                            badge = badgeFor(index, navigationBadge),
+                            onClick = {
+                                if (!selected) {
+                                    mainPagerState.animateToPage(index)
+                                }
+                            },
+                        )
+                    }
                 }
             }
+        }
+        if (gaussianBlurBackdrop != null) {
+            GaussianBlurredBar(
+                backdrop = gaussianBlurBackdrop,
+                blurRadius = bottomBarBlurRadius,
+                surfaceColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shape = CircleShape,
+            ) {
+                barSurface()
+            }
+        } else {
+            barSurface()
         }
     }
 }
@@ -151,6 +183,8 @@ private fun LiquidBottomBarMaterial(
     items: List<Triple<Int, ImageVector, ImageVector>>,
     navigationBadge: NavigationBadgeState,
     modifier: Modifier,
+    useGaussianBlur: Boolean,
+    blurRadius: Dp,
 ) {
     val mainPagerState = LocalMainPagerState.current
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -167,6 +201,8 @@ private fun LiquidBottomBarMaterial(
         backdrop = backdrop,
         tabsCount = items.size,
         isBlurEnabled = true,
+        useGaussianBlur = useGaussianBlur,
+        blurRadius = blurRadius,
         accentColor = MaterialTheme.colorScheme.primary,
         tabContentColor = MaterialTheme.colorScheme.onSurface,
         surfaceContainer = MaterialTheme.colorScheme.surfaceContainerHigh,
