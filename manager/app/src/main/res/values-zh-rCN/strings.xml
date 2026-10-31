@@ -927,7 +927,7 @@
     <string name="theme_preview_caption_material">预览 · Material 3 Expressive</string>
     <string name="theme_preview_description">使用当前主题和背景的首页预览</string>
     <string name="theme_export">导出主题包</string>
-    <string name="theme_export_summary">将当前主题和背景保存为 .zip 主题包</string>
+    <string name="theme_export_summary">将当前主题和背景保存为 .sukisu 主题包</string>
     <string name="theme_import">导入主题包</string>
     <string name="theme_import_summary">应用由 SukiSU 导出的主题包</string>
     <string name="theme_reset">恢复默认</string>

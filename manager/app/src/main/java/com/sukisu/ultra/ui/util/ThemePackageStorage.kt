@@ -68,6 +68,13 @@ data class ImportedTheme(
 object ThemePackageStorage {
     const val CURRENT_VERSION = 1
 
+    /**
+     * SAF filter for importing theme packages. Exported packages use the custom `.sukisu`
+     * extension and are encrypted, so the system cannot reliably classify them as ZIP files.
+     * Filtering by ZIP MIME types therefore hides exported packages from the document picker.
+     */
+    const val IMPORT_MIME_TYPE = "*/*"
+
     private const val THEME_ENTRY = "theme.json"
     private const val BACKGROUND_ENTRY = "background"
     private const val CARD_BACKGROUND_ENTRY = "card_background"

@@ -936,7 +936,7 @@
     <string name="theme_preview_caption_material">Preview · Material 3 Expressive</string>
     <string name="theme_preview_description">Home screen preview with the current theme and background</string>
     <string name="theme_export">Export Theme</string>
-    <string name="theme_export_summary">Save the current theme and background as a .zip package</string>
+    <string name="theme_export_summary">Save the current theme and background as a .sukisu package</string>
     <string name="theme_import">Import Theme</string>
     <string name="theme_import_summary">Apply a theme package exported from SukiSU</string>
     <string name="theme_reset">Restore Defaults</string>
